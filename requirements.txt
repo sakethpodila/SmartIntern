@@ -1,0 +1,7 @@
+fastapi
+streamlit
+uvicorn
+requests
+jsearch
+langchain
+pydantic
