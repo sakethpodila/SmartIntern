@@ -1,4 +1,4 @@
-**# SmartIntern - AI-Powered Internship & Job Assistant Agent**
+# SmartIntern - AI-Powered Internship & Job Assistant Agent
 
 ## 🔍 Overview
 SmartIntern is a multi-agent AI application designed to automate and enhance the internship/job search process. It combines resume parsing, chatbot-based preference gathering, job listing retrieval via JSearch API, semantic similarity matching, and AI-generated cover letters. The system is modular, agent-based, and built for deployment with a sleek Streamlit UI and FastAPI backend.
