@@ -84,3 +84,32 @@ Feel free to fork, raise issues, or submit pull requests for improvements!
 
 ## ✨ Maintained By
 Built with ❤️ by [Your Name] for Hackathon Innovation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--
+frontend/
+├── Home.py
+├── components/
+│   ├── ResumeUploader.py
+│   ├── ChatbotInterface.py
+│   └── JobDisplay.py
+└── utils/
+    └── api.py     # Calls FastAPI endpoints
+
+
+Use Case | Model
+Resume Parsing | dslim/bert-base-NER
+Semantic Search | all-MiniLM-L6-v2
+Cover Letter + Chatbot | mistralai/Mistral-7B-Instruct-v0.2 via HF Inference API
