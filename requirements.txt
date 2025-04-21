@@ -5,3 +5,9 @@ requests
 jsearch
 langchain
 pydantic
+python-dotenv
+spacy
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz
+PyMuPDF
+docx2txt
+python-multipart # Form data requires this package to be installed
