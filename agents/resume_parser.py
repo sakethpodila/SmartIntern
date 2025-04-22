@@ -4,18 +4,18 @@ import requests
 import json
 from dotenv import load_dotenv
 import os
+from openai import OpenAI
 
-LLM_MODEL = "mistralai/Mistral-Nemo-Instruct-2407" 
+LLM_MODEL = "gpt-3.5-turbo" 
 
-llm_api_url = f"https://api-inference.huggingface.co/models/{LLM_MODEL}"
+# llm_api_url = f"https://api-inference.huggingface.co/models/{LLM_MODEL}"
 
 load_dotenv()
-hf_api_key = os.getenv('HF_API_KEY')
-
-headers = {
-    "Authorization": f"Bearer {hf_api_key}",
-    "Content-Type": "application/json"
-}
+client = OpenAI(api_key = os.getenv("OPENAI_API_KEY"))
+# headers = {
+#     "Authorization": f"Bearer {hf_api_key}",
+#     "Content-Type": "application/json"
+# }
 
 
 
@@ -79,99 +79,88 @@ def traditional_resume_parser(text: str, country: str) -> dict:
     }
 
 def llm_resume_parser(text: str, country: str) -> dict:
-    prompt = (
-        "You are an intelligent resume parser assistant. Your task is to extract structured information "
-        "from raw resume text and return a clean, valid JSON with the following keys:\n"
-        "- name\n"
-        "- email\n"
-        "- phone\n"
-        "- country (use the one provided by the user)\n"
-        "- summary\n"
-        "- education (as a list of entries)\n"
-        "- skills (as a list)\n"
-        "- internships (as a list)\n"
-        "- work_experience (as a list)\n"
-        "- projects (as a list)\n"
-        "- certifications (as a list)\n"
-        "If a field is not available, return null or an empty list. "
-        f"User provided country: {country}\n\n"
-        f"Resume Text:\n{text}"
-    )
+    try:
+        system_prompt = (
+            "You are an intelligent resume parser assistant. Your task is to extract structured information "
+            "from raw resume text and present it in clean, readable format. Just return the result in the form of a dict with clear labels. "
+            "The output format should be like:\n"
+            "Name: ...\n"
+            "Email: ...\n"
+            "Phone: ...\n"
+            "Country: ...\n"
+            "Summary: ...\n"
+            "Education:\n  - Entry 1\n  - Entry 2\n"
+            "Skills:\n  - Skill 1\n  - Skill 2\n"
+            "Internships:\n  - Internship 1\n"
+            "Work Experience:\n  - Job 1\n"
+            "Projects:\n  - Project 1\n"
+            "Certifications:\n  - Cert 1\n"
+            "Achievements:\n  - Achievement 1\n"
+            "Return as much info as you can. If a field is missing, just leave it blank or mention 'None'.\n\n"
+            f"User-provided country: {country}\n\n"
+            f"Resume Text:\n{text}"
+        )
 
-    payload = {
-        "inputs": prompt,
-        "parameters": {
-            "max_new_tokens": 1024,
-            "temperature": 0.2,
-            "return_full_text": False
-        }
-    }
+        response = client.chat.completions.create(
+            model=LLM_MODEL,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": system_prompt}
+            ],
+            temperature=0.2
+        )
 
-    response = requests.post(llm_api_url, headers=headers, json=payload)
-    print(response.json(), flush=True)
+        content = response.choices[0].message.content
+        # print("🔍 Raw LLM Output:\n", content, flush=True)
 
-    if response.status_code == 200:
-        try:
-            result = response.json()
-            # print(f"Result: {result}", flush=True)
-            content = result[0]["generated_text"]  # Extract generated text from Hugging Face API
+        parsed_json = json.loads(content) if isinstance(content, str) else content
 
-            # parsed_json = json.loads(content) if isinstance(content, str) else content
+        if "country" not in parsed_json:
+            parsed_json["country"] = country
 
-            # Add country manually if missing
-            if "country" not in content:
-                content["country"] = country
+        return parsed_json
 
-            return content
-
-        except Exception as e:
-            return {"error": f"Failed to parse model output as JSON: {str(e)}"}
-
-    else:
-        return {
-            "error": f"Hugging Face API request failed with status code {response.status_code}: {response.text}"
-        }
-
+    except Exception as e:
+        return {"error": f"Failed to call OpenAI or parse response: {str(e)}"}
+    
 
 def reconcile_parsed_outputs(traditional_data: dict, llm_data: dict) -> dict:
-    # 🧠 Build Prompt
-    prompt = (
-        "You are an intelligent resume reconciliation assistant. Your task is to merge the resume information "
-        "from a traditional parser and an LLM-based parser.\n"
-        "Return only a valid JSON object with the following keys:\n"
-        "- Name\n"
-        "- Summary\n"
-        "- Country\n\n"
-        "The Summary should be a coherent paragraph combining the candidate's background, skills, and experience "
-        "in a way suitable for semantic search or vector-based retrieval. "
-        "Use the best available data from both sources.\n\n"
-        f"Traditional Parsed Resume:\n{json.dumps(traditional_data, indent=2)}\n\n"
-        f"LLM Parsed Resume:\n{json.dumps(llm_data, indent=2)}\n\n"
-        "Reconciled Final Output:"
-    )
+    try:
+        prompt = (
+            "You are an intelligent resume reconciliation assistant. Your task is to merge the resume information "
+            "from a traditional parser and an LLM-based parser.\n"
+            "Return only a dictionary with the following keys:\n"
+            "- Name\n"
+            "- Summary\n"
+            "- Country\n\n"
+            "The Summary should be a comprehensive, detailed professional summary that combines the candidate’s background, skills, and achievements."
+            "Use rich, descriptive language suitable for semantic search or retrieval. Include relevant keywords from both parsed resumes."
+            "in a way suitable for semantic search or vector-based retrieval. "
+            "The Summary should be atleast 300 words in length.\n\n"
+            "Use the best available and unique data respectively from both sources.\n\n"
+            f"Traditional Parsed Resume:\n{json.dumps(traditional_data, indent=2)}\n\n"
+            f"LLM Parsed Resume:\n{json.dumps(llm_data, indent=2)}\n\n"
+            "Reconciled Final Output:"
+        )
 
-    payload = {
-        "inputs": prompt,
-        "parameters": {
-            "temperature": 0.3,
-            "max_new_tokens": 512,
-            "return_full_text": False
-        }
-    }
+    
+        # Call OpenAI API (using GPT-3.5 or GPT-4)
+        response = client.chat.completions.create(
+            model=LLM_MODEL,  # or "gpt-4" for a more powerful model
+            messages=[
+                {"role": "system", "content": "You are a resume reconciliation assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.3,
+        )
+        
 
-    response = requests.post(llm_api_url, headers=headers, json=payload)
+        # Extract the response content
+        generated_text = response.choices[0].message.content
+        # print("🔍 Reconciled Output:\n", generated_text, flush=True)
 
-    if response.status_code == 200:
-        try:
-            result = response.json()
-            generated_text = result[0]["generated_text"]
+        # Return the generated text (which should be the reconciled JSON)
+        return generated_text
 
-            # # Parse and return clean JSON
-            # parsed_json = json.loads(generated_text)
-            return generated_text
-
-        except Exception as e:
-            return {"error": f"Failed to parse Hugging Face LLM output: {str(e)}"}
-
-    else:
-        return {"error": f"Hugging Face API request failed with status {response.status_code}: {response.text}"}
+    except Exception as e:
+        return {"error": f"Failed to call OpenAI API or parse response: {str(e)}"}

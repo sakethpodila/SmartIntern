@@ -11,3 +11,4 @@ en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_
 PyMuPDF
 docx2txt
 python-multipart # Form data requires this package to be installed
+openai

@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, File, Form
 from pydantic import BaseModel
 import uvicorn
 from dotenv import load_dotenv
-from agents.resume_parser import traditional_resume_parser, llm_resume_parser#, reconcile_parser_outputs
+from agents.resume_parser import traditional_resume_parser, llm_resume_parser, reconcile_parsed_outputs
 import os
 import fitz
 import docx2txt
@@ -60,13 +60,14 @@ async def parse_resume(
         
         # Step 2 : Run the traditional and LLM parsers
         traditional_data = traditional_resume_parser(text, country)
-        print(f"Traditional Parser Output: {traditional_data}", flush=True)
+        # print(f"Traditional Parser Output: {traditional_data}", flush=True)
         
-        # llm_data = llm_resume_parser(text, country)
+        llm_data = llm_resume_parser(text, country)
         # print(f"LLM Parser Output: {llm_data}", flush=True)
         
         # Step 3 : Reconcile the two using LLM
-        # final_result = await reconcile_parser_outputs(traditional_data, llm_data)
+        final_result = reconcile_parsed_outputs(traditional_data, llm_data)
+        print(f"Final Result: {final_result}", flush=True)
         
 if __name__ == '__main__':
     uvicorn.run(app, host = '127.0.0.1 --port 8000', port = 8000)

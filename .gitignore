@@ -1,2 +1,3 @@
 venv_smartintern
 .env
+__pycache__
