@@ -1,3 +1,5 @@
 venv_smartintern
 .env
-__pycache__
+backend/__pycache__
+agents/__pycache__
+frontend/__pycache__

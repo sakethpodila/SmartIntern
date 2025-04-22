@@ -132,9 +132,11 @@ def reconcile_parsed_outputs(traditional_data: dict, llm_data: dict) -> dict:
             "Return only a dictionary with the following keys:\n"
             "- Name\n"
             "- Summary\n"
+            "- Projects\n"
             "- Country\n\n"
-            "The Summary should be a comprehensive, detailed professional summary that combines the candidate’s background, skills, and achievements."
+            "The Summary key should contain comprehensive, detailed professional description that combines the candidate’s background, skills, projects, and experience along with achievements(optional)."
             "Use rich, descriptive language suitable for semantic search or retrieval. Include relevant keywords from both parsed resumes."
+            "Also include coursework, courses that the candidate has completed or taken, and any other relevant information that can be used to enhance the summary."
             "in a way suitable for semantic search or vector-based retrieval. "
             "The Summary should be atleast 300 words in length.\n\n"
             "Use the best available and unique data respectively from both sources.\n\n"
@@ -158,9 +160,12 @@ def reconcile_parsed_outputs(traditional_data: dict, llm_data: dict) -> dict:
         # Extract the response content
         generated_text = response.choices[0].message.content
         # print("🔍 Reconciled Output:\n", generated_text, flush=True)
+        
+        # Parse the generated text into a dictionary
+        parsed_output = json.loads(generated_text) if isinstance(generated_text, str) else generated_text
 
         # Return the generated text (which should be the reconciled JSON)
-        return generated_text
+        return parsed_output
 
     except Exception as e:
         return {"error": f"Failed to call OpenAI API or parse response: {str(e)}"}

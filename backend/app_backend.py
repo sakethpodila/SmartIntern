@@ -3,6 +3,7 @@ from pydantic import BaseModel
 import uvicorn
 from dotenv import load_dotenv
 from agents.resume_parser import traditional_resume_parser, llm_resume_parser, reconcile_parsed_outputs
+from agents.chatbot import get_llm_response
 import os
 import fitz
 import docx2txt
@@ -55,7 +56,7 @@ async def parse_resume(
         else:
             return {"error": "Unsupported file type"}
         
-        print(f"Extracted text from {file.filename} ({file_type}):\n {text}", flush=True)
+        # print(f"Extracted text from {file.filename} ({file_type}):\n {text}", flush=True)
           
         
         # Step 2 : Run the traditional and LLM parsers
@@ -66,8 +67,18 @@ async def parse_resume(
         # print(f"LLM Parser Output: {llm_data}", flush=True)
         
         # Step 3 : Reconcile the two using LLM
-        final_result = reconcile_parsed_outputs(traditional_data, llm_data)
-        print(f"Final Result: {final_result}", flush=True)
+        parsed_resume = reconcile_parsed_outputs(traditional_data, llm_data)
+        # print(f"Final Result: {parsed_resume}", flush=True)
+        
+        return parsed_resume['Summary']
+
+class QueryRequest(BaseModel):
+    query: str
+    resume_summary: str
+    
+@app.post('/get_query_response/')
+async def get_query_response(request: QueryRequest):
+    return get_llm_response(request.query, request.resume_summary)
         
 if __name__ == '__main__':
     uvicorn.run(app, host = '127.0.0.1 --port 8000', port = 8000)
