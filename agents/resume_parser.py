@@ -87,7 +87,7 @@ def llm_resume_parser(text: str, country: str) -> dict:
             "Name: ...\n"
             "Email: ...\n"
             "Phone: ...\n"
-            "Country: ...\n"
+            "job_country: ...\n"
             "Summary: ...\n"
             "Education:\n  - Entry 1\n  - Entry 2\n"
             "Skills:\n  - Skill 1\n  - Skill 2\n"
@@ -97,7 +97,7 @@ def llm_resume_parser(text: str, country: str) -> dict:
             "Certifications:\n  - Cert 1\n"
             "Achievements:\n  - Achievement 1\n"
             "Return as much info as you can. If a field is missing, just leave it blank or mention 'None'.\n\n"
-            f"User-provided country: {country}\n\n"
+            f"User-provided country where they want to apply for a job: {country}\n\n"
             f"Resume Text:\n{text}"
         )
 
@@ -115,8 +115,8 @@ def llm_resume_parser(text: str, country: str) -> dict:
 
         parsed_json = json.loads(content) if isinstance(content, str) else content
 
-        if "country" not in parsed_json:
-            parsed_json["country"] = country
+        if "job_country" not in parsed_json:
+            parsed_json["job_country"] = country
 
         return parsed_json
 
@@ -139,6 +139,7 @@ def reconcile_parsed_outputs(traditional_data: dict, llm_data: dict) -> dict:
             "Also include coursework, courses that the candidate has completed or taken, and any other relevant information that can be used to enhance the summary."
             "in a way suitable for semantic search or vector-based retrieval. "
             "The Summary should be atleast 300 words in length.\n\n"
+            "Summary should also contain the Country specified  by the user where they would like to apply for a job.\n\n"
             "Use the best available and unique data respectively from both sources.\n\n"
             f"Traditional Parsed Resume:\n{json.dumps(traditional_data, indent=2)}\n\n"
             f"LLM Parsed Resume:\n{json.dumps(llm_data, indent=2)}\n\n"
