@@ -43,7 +43,7 @@ def generate_query_for_jobsearch(resume_summary):
         The query should be in the format:
         - "[Job Level] [Job Type] jobs"
         Example queries:
-        - "entry level AI jobs"
+        - "AI jobs"
         - "internship in AI"
         - "senior developer jobs"
         - "junior data scientist jobs"

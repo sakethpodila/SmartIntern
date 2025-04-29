@@ -12,3 +12,7 @@ PyMuPDF
 docx2txt
 python-multipart # Form data requires this package to be installed
 openai
+faiss-cpu
+langchain_community
+langchain
+scikit-learn
