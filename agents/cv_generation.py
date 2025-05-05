@@ -69,7 +69,9 @@ def generate_cover_letter(resume_summary: dict, job_details: dict) -> str:
             temperature=0.7
         )
 
-        return response.choices[0].message.content
+        letter = response.choices[0].message.content
+        
+        return letter.strip()
 
     except Exception as e:
         print(f"Error in cover letter generation: {str(e)}", flush=True)

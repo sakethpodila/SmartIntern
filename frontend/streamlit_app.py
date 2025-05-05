@@ -23,7 +23,11 @@ if 'chat_history' not in st.session_state:
 if 'ready_to_search' not in st.session_state:
     st.session_state.ready_to_search = False
 
-if 'generated_cover_letters' not in st.session_state:
+# Ensure filtered_jobs and generated_cover_letters are initialized in session state
+if "filtered_jobs" not in st.session_state:
+    st.session_state.filtered_jobs = []
+
+if "generated_cover_letters" not in st.session_state:
     st.session_state.generated_cover_letters = {}
     
 # File Upload Code    
@@ -111,6 +115,7 @@ def generate_cover_letter(resume_data: dict, job_data: dict) -> dict:
         
         if response.status_code == 200:
             result = response.json()
+            # print(result, flush=True)
             if "error" in result:
                 st.error(f"Backend Error: {result['error']}")
             return result
@@ -189,57 +194,62 @@ if st.button("Start Job Search"):
     # else:
     # st.error("Please parse your resume first.")
     
-    filtered_jobs = filter_job_listings(st.session_state.jobs, st.session_state.resume_summary, st.session_state.chat_history, st.session_state.top_k)
+    st.session_state.filtered_jobs = filter_job_listings(
+        st.session_state.jobs, 
+        st.session_state.resume_summary, 
+        st.session_state.chat_history, 
+        st.session_state.top_k
+        )
     
+if "filtered_jobs" in st.session_state and st.session_state.filtered_jobs:
     st.subheader("🔍 Top Matching Jobs for You")
 
-    if filtered_jobs:
-        for i, (job, score) in enumerate(filtered_jobs, start=1):
-            with st.expander(f"{i}. {job['job_title']} at {job['job_publisher']} — Score: {score:.2f}"):
-                st.markdown(f"**🏢 Employer:** {job['job_publisher']}")
-                st.markdown(f"**📍 Location:** {job['job_location']}")
-                st.markdown(f"**🧑‍💼 Employment Type:** {job['job_employment_type']}")
-                st.markdown(f"**📄 Description:**")
-                st.write(job['job_description'])
+    for i, (job, score) in enumerate(st.session_state.filtered_jobs, start=1):
+        with st.expander(f"{i}. {job['job_title']} at {job['job_publisher']} — Score: {score:.2f}"):
+            st.markdown(f"**🏢 Employer:** {job['job_publisher']}")
+            st.markdown(f"**📍 Location:** {job['job_location']}")
+            st.markdown(f"**🧑‍💼 Employment Type:** {job['job_employment_type']}")
+            st.markdown(f"**📄 Description:**")
+            st.write(job['job_description'])
 
-                # Store cover letter in session state when generated
-                if st.button("📝 Generate Cover Letter", key=f"cv_btn_{i}"):
-                    with st.spinner("Creating your cover letter..."):
-                        cv_response = generate_cover_letter(
-                            resume_data=st.session_state.resume_summary,
-                            job_data=job
-                        )
-                        # Store the response in session state
-                        st.session_state.generated_cover_letters[i] = cv_response
+            # Store cover letter in session state when generated
+            if st.button("📝 Generate Cover Letter", key=f"cv_btn_{i}"):
+                with st.spinner("Creating your cover letter..."):
+                    cv_response = generate_cover_letter(
+                        resume_data=st.session_state.resume_summary,
+                        job_data=job
+                    )
+                    # Store the response in session state
+                    st.session_state.generated_cover_letters[i] = cv_response
 
-                # Display cover letter if it exists in session state
-                if i in st.session_state.generated_cover_letters:
-                    cv_response = st.session_state.generated_cover_letters[i]
-                    if "error" in cv_response:
-                        st.error(cv_response["error"])
-                    elif "cover_letter" in cv_response:
-                        st.markdown("### Your Cover Letter")
-                        st.text_area(
-                            label="Cover Letter Content",
-                            value=cv_response["cover_letter"],
-                            height=400,
-                            key=f"cv_text_{i}",
-                            disabled=True
-                        )
-                        
-                        st.download_button(
-                            label="📥 Download Cover Letter",
-                            data=cv_response["cover_letter"],
-                            file_name=f"cover_letter_{job['job_title'].replace(' ', '_')}.txt",
-                            mime="text/plain",
-                            key=f"download_cv_{i}"
-                        )
+            # Display cover letter if it exists in session state
+            if i in st.session_state.generated_cover_letters:
+                cv_response = st.session_state.generated_cover_letters[i]
+                if "error" in cv_response:
+                    st.error(cv_response["error"])
+                elif "cover_letter" in cv_response:
+                    st.markdown("### Your Cover Letter")
+                    st.text_area(
+                        label="Cover Letter Content",
+                        value=cv_response["cover_letter"],
+                        height=400,
+                        key=f"cv_text_{i}",
+                        disabled=True
+                    )
+                    
+                    st.download_button(
+                        label="📥 Download Cover Letter",
+                        data=cv_response["cover_letter"],
+                        file_name=f"cover_letter_{job['job_title'].replace(' ', '_')}.txt",
+                        mime="text/plain",
+                        key=f"download_cv_{i}"
+                    )
 
-                st.markdown("---")
-                if job.get('job_apply_link'):
-                    st.markdown(f"[🚀 Apply Now]({job['job_apply_link']})", unsafe_allow_html=True)
-    else:
-        st.warning("No job matches found. Please adjust your preferences.")
-    
+            st.markdown("---")
+            if job.get('job_apply_link'):
+                st.markdown(f"[🚀 Apply Now]({job['job_apply_link']})", unsafe_allow_html=True)
+# else:
+#     st.warning("No job matches found. Please adjust your preferences.")
+
 # if st.session_state.jobs:
 
