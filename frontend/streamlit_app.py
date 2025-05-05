@@ -56,6 +56,8 @@ st.session_state.top_k = st.selectbox(
 
 st.session_state.country = selected_country
 
+# ------------------------------------------------------- Functions for making API calls ------------------------------------------
+
 if st.button("Parse Resume") and uploaded_file is not None and st.session_state.country:
     with st.spinner("Parsing resume..."):
         
@@ -81,11 +83,12 @@ if st.button("Parse Resume") and uploaded_file is not None and st.session_state.
             st.error("An error occurred while parsing your resume.")
             st.write(str(e))
             
-# Gettings the jobs based on the resume
-def get_job_listings(country, resume_summary):
+# Retrieving the jobs based on the resume and chat history
+@st.cache_data
+def get_job_listings(country, resume_summary, chat_history):
     # API call to get the jobs based on the resume summary
     try:
-        response = requests.post(f"{BACKEND_URL}/retrieve_jobs/", json={"country": country, "resume_summary": resume_summary})
+        response = requests.post(f"{BACKEND_URL}/retrieve_jobs/", json={"country": country, "resume_summary": resume_summary, "chat_history": chat_history})
         if response.status_code == 200:
             st.session_state.ready_to_search = True
             return response.json()
@@ -157,6 +160,7 @@ def get_chatbot_response(user_query, resume_summary, chat_history):
         st.error("An error occurred while getting the chatbot response.")
         st.write(str(e))
         
+# ------------------------------------------------------- Interface for application ---------------------------------------------
 # INTERACTIVE CHATBOT
         
 # Display previous chat messages
@@ -187,7 +191,7 @@ if user_query:
     
 # JOB SEARCH
 if st.button("Start Job Search"):
-    st.session_state.jobs = get_job_listings(country=st.session_state.country, resume_summary=st.session_state.resume_summary)
+    st.session_state.jobs = get_job_listings(country=st.session_state.country, resume_summary=st.session_state.resume_summary, chat_history=st.session_state.chat_history)
     # print((st.session_state.jobs[0]))
     st.success("Your job search is completed!")
 

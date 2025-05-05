@@ -12,8 +12,10 @@ LLM_MODEL = "gpt-3.5-turbo"
 load_dotenv()
 client = OpenAI(api_key = os.getenv("OPENAI_API_KEY"))
 
-def generate_query_for_jobsearch(resume_summary):
+def generate_query_for_jobsearch(resume_summary: dict, chat_history: list[dict]):
     try:
+        # Format the chat history into readable lines
+        formatted_chat_history = "\n".join([f"{msg['role'].capitalize()}: {msg['content']}" for msg in chat_history])
         
         summary =   f"""
         Summary: {resume_summary.get('Summary', 'No summary provided.')}
@@ -22,9 +24,9 @@ def generate_query_for_jobsearch(resume_summary):
         # Crafting the system and user prompts for the LLM
         
         system_prompt = f"""
-        You are a job search assistant. Your task is to generate a concise job search query based solely on the candidate's resume summary.
+        You are a job search assistant. Your task is to generate a concise job search query based on the candidate's resume summary and the given chat history with the user.
         - Focus on extracting the **desired job role**, **location** (if mentioned), **job level** (e.g., entry level, senior), and **job type** (e.g., AI, ML).
-        - The query should include both the job role and the job level/type, such as "entry-level AI jobs" or "internship in AI".
+        - The query should include the job role and the job level/type, such as "entry-level AI jobs" or "internship in AI" or "senior Data Scientist".
         - If the resume mentions a specific job level (e.g., internship, entry-level, senior), include it.
         - If no job level is mentioned, generate a generic query like "AI jobs" or "developer jobs".
         - The query should be simple and clear, with the format "[Job Level] [Job Type] jobs".
@@ -35,11 +37,14 @@ def generate_query_for_jobsearch(resume_summary):
         user_prompt = f"""
          Resume Summary:
         {summary}
+        
+        Chat History:
+        {formatted_chat_history}
 
         ---
 
         Task:
-        Based on the above resume summary, generate a **short, clear job search query** that includes the **job role**, **job level** (e.g., entry-level, internship), and **job type** (e.g., AI, ML).
+        Based on the above resume summary and the most recent chat history conversation also keeping in mind the entire chat history, generate a **short, clear job search query** that includes the **job role**, **job level** (e.g., entry-level, internship), and **job type** (e.g., AI, ML).
         The query should be in the format:
         - "[Job Level] [Job Type] jobs"
         Example queries:

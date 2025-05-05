@@ -204,10 +204,11 @@ async def get_query_response(request: QueryResponseRequest):
 class RetrieveJobsRequest(BaseModel):
     country: str
     resume_summary: dict
+    chat_history: list[dict]
     
 @app.post('/retrieve_jobs/')
 async def retrieve_jobs(request: RetrieveJobsRequest):
-        jsearch_query = generate_query_for_jobsearch(request.resume_summary)
+        jsearch_query = generate_query_for_jobsearch(request.resume_summary, request.chat_history)
         country = get_country_code(request.country)
         print(f"Country Code: {country},\nJsearch Query:{jsearch_query}", flush=True)
         raw_jobs_data = get_jobs(jsearch_query, country)
