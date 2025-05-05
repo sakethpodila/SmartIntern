@@ -2,7 +2,8 @@ import streamlit as st
 import json
 import requests
 
-BACKEND_URL = "http://127.0.0.1:8000"  # Replace with your backend URL
+# BACKEND_URL = "http://127.0.0.1:8000"  # Replace with your backend URL
+BACKEND_URL = "http://backend:8000"
 
 st.set_page_config(
     page_title = "SmartIntern",
