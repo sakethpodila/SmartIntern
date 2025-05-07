@@ -7,7 +7,7 @@ from agents.chatbot import get_llm_response
 from agents.extract_query import generate_query_for_jobsearch
 from agents.job_search import get_jobs
 from agents.embed import get_embeddings
-from vectorDB import VectorDatabase
+from backend.vectorDB import VectorDatabase
 import os
 import fitz
 import docx2txt
