@@ -14,7 +14,7 @@ def get_embeddings(arr:list) -> list[list[float]]:
     
     response = openai.embeddings.create(
         input=arr,
-        model=EMBEDDING_MODEL
+        model=EMBEDDING_MODEL    
     )
     
     embeddings = [record.embedding for record in response.data]
