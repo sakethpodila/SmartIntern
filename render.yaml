@@ -1,10 +1,16 @@
+formGroups:
+  SmartIntern_env_var:
+    - name: OPENAI_API_KEY
+      fromEnv: OPENAI_API_KEY  # Reference the environment variable
+    - name: RAPID_API_KEY
+      fromEnv: RAPID_API_KEY  # Reference the environment variable
+
 services:
   - type: web
     name: frontend
     env: docker
     plan: free
     dockerfilePath: ./frontend/Dockerfile_frontend
-    startCommand: streamlit run streamlit_app.py --server.port=8501 --server.address=0.0.0.0
     autoDeploy: true
     envVars:
       - key: BACKEND_URL
@@ -16,7 +22,6 @@ services:
     env: docker
     plan: free
     dockerfilePath: ./backend/Dockerfile_backend
-    startCommand: uvicorn app_backend:app --host 0.0.0.0 --port 8000
     autoDeploy: true
     envVars:
-      - fromGroup: shared-env-vars
+      - fromGroup: SmartIntern_env_var
