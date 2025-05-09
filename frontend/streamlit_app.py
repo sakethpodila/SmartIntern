@@ -5,7 +5,7 @@ import requests
 
 # BACKEND_URL = "http://127.0.0.1:8000"  # Replace with your backend URL
 # BACKEND_URL = "http://backend:8000"
-BACKEND_URL = "https://backend-2cxc.onrender.com"  # Replace with your backend URL
+BACKEND_URL = "https://backend-gd2l.onrender.com"  # Replace with your backend URL
 
 st.set_page_config(
     page_title = "SmartIntern",
