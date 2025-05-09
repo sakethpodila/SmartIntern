@@ -43,11 +43,10 @@ G --> H[Generate and Edit AI Cover Letters for Each Job]
 
 ---
 
-## 📊 Use Case Agents (LangGraph)
+## 📊 Use Case Agents
 
 - **ReAct Agent**: Conversational reasoning to understand user preferences
 - **Adaptive RAG**: Dynamically adapts to retrieve contextually relevant jobs
-- **Plan-and-Execute**: (Optional future use) for timeline-based job tracking
 
 ---
 
@@ -77,6 +76,6 @@ Feel free to fork, raise issues, or submit pull requests for improvements!
 ---
 
 ## ✨ Maintained By KSAP and PODS
-Built for Jobless people, free to Innovation.
+Built for Jobless people, free to Innovate.
 
-### Website Link: [text](https://smartintern.onrender.com)
+### Website Link: [SmartIntern](https://smartintern.onrender.com)
