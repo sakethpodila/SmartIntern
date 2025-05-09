@@ -1,11 +1,3 @@
-envVarGroups:
-  - name: SmartIntern_env_var
-    envVars:
-      - name: OPENAI_API_KEY
-        fromEnv: OPENAI_API_KEY  # Reference the environment variable
-      - name: RAPID_API_KEY
-        fromEnv: RAPID_API_KEY  # Reference the environment variable
-
 services:
   - type: web
     name: frontend
@@ -15,7 +7,9 @@ services:
     autoDeploy: true
     envVars:
       - key: BACKEND_URL
-        value: http://backend:8000  # internal Docker network reference
+        value: http://backend:8000
+    envVarGroups:
+      - SmartIntern_env_var
 
   - type: web
     name: backend
