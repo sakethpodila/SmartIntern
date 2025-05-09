@@ -1,9 +1,10 @@
 import streamlit as st
 import json
+from datetime import datetime
 import requests
 
-# BACKEND_URL = "http://127.0.0.1:8000"  # Replace with your backend URL
-BACKEND_URL = "http://backend:8000"
+BACKEND_URL = "http://127.0.0.1:8000"  # Replace with your backend URL
+# BACKEND_URL = "http://backend:8000"
 
 st.set_page_config(
     page_title = "SmartIntern",
@@ -234,21 +235,59 @@ if "filtered_jobs" in st.session_state and st.session_state.filtered_jobs:
                     st.error(cv_response["error"])
                 elif "cover_letter" in cv_response:
                     st.markdown("### Your Cover Letter")
-                    st.text_area(
-                        label="Cover Letter Content",
-                        value=cv_response["cover_letter"],
-                        height=400,
-                        key=f"cv_text_{i}",
-                        disabled=True
-                    )
                     
-                    st.download_button(
-                        label="📥 Download Cover Letter",
-                        data=cv_response["cover_letter"],
-                        file_name=f"cover_letter_{job['job_title'].replace(' ', '_')}.txt",
-                        mime="text/plain",
-                        key=f"download_cv_{i}"
+                    # Define callback for text changes
+                    def update_letter(new_content, key):
+                        st.session_state[key] = new_content
+                    
+                    edit_key = f'cv_edit_{i}'
+                    if edit_key not in st.session_state:
+                        st.session_state[edit_key] = cv_response['cover_letter']
+
+                    # Create text area with callback
+                    edited_cover_letter = st.text_area(
+                        label='Edit your cover letter',
+                        value=st.session_state[edit_key],
+                        height=400,
+                        key=f'text_area_{i}',
+                        on_change=update_letter,
+                        args=(st.session_state[edit_key], edit_key)
                     )
+
+                    try:
+                        from docx import Document
+                        doc = Document()
+                        # Add company info
+                        doc.add_paragraph(f"Application for: {job['job_title']}")
+                        doc.add_paragraph(f"Company: {job['job_publisher']}")
+                        doc.add_paragraph(f"Date: {datetime.now().strftime('%B %d, %Y')}")
+                        doc.add_paragraph("\n")
+                        
+                        # Add cover letter content using session state
+                        paragraphs = st.session_state[edit_key].split('\n\n')
+                        for para in paragraphs:
+                            if para.strip():
+                                doc.add_paragraph(para.strip())
+                        
+                        from io import BytesIO
+                        docx_buffer = BytesIO()
+                        doc.save(docx_buffer)
+                        docx_buffer.seek(0)
+                        
+                        st.download_button(
+                            label="📄 Download Cover Letter",
+                            data=docx_buffer,
+                            file_name=f"cover_letter_{job['job_title'].replace(' ', '_')}_{datetime.now().strftime('%Y%m%d')}.docx",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            key=f"download_docx_{i}"
+                        )
+                    except Exception as e:
+                        st.error(f"Error creating DOCX: {str(e)}")
+
+                    # Add a save button to update the stored version
+                    if st.button("💾 Save Changes", key=f"save_{i}"):
+                        st.session_state[edit_key] = edited_cover_letter
+                        st.success("Changes saved!")
 
             st.markdown("---")
             if job.get('job_apply_link'):
