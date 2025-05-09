@@ -117,7 +117,7 @@ def generate_cover_letter(resume_data: dict, job_data: dict) -> dict:
             }
         )
         
-        st.write(f"Response status: {response.status_code}")
+        # st.write(f"Response status: {response.status_code}")
         
         if response.status_code == 200:
             result = response.json()
