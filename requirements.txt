@@ -17,3 +17,4 @@ langchain_community
 langchain
 scikit-learn==1.4.0
 numpy>=1.24.3
+python-docx==0.8.11

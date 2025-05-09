@@ -24,9 +24,12 @@ services:
     depends_on:
       - backend
 
-# "docker compose up --build" => builds all images of all the services in the .yml file and starts the containers
+# "docker-compose up --build" => builds all images of all the services in the .yml file and starts the containers
 
 # "docker compose build frontend" => builds only the frontend service image
 # "docker compose build backend" => builds only the backend service image
 
 # "docker compose up" => restarts the images in the container
+# If you:
+# Make no changes to your Dockerfiles or requirements.
+# Only modify internal code (like .py, .js, .html) already COPYed during the last build.
