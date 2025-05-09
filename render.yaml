@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: frontend
+    name: SmartIntern
     env: docker
     plan: free
     dockerfilePath: ./frontend/Dockerfile_frontend
