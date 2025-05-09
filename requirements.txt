@@ -1,0 +1,20 @@
+fastapi
+streamlit
+uvicorn
+requests
+jsearch
+langchain
+pydantic
+python-dotenv
+spacy
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz
+PyMuPDF
+docx2txt
+python-multipart # Form data requires this package to be installed
+openai
+faiss-cpu
+langchain_community
+langchain
+scikit-learn==1.4.0
+numpy>=1.24.3
+python-docx==0.8.11

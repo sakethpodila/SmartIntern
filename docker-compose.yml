@@ -1,0 +1,35 @@
+# version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile_backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+      - ./agents:/app/agents
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile_frontend
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+
+# "docker-compose up --build" => builds all images of all the services in the .yml file and starts the containers
+
+# "docker compose build frontend" => builds only the frontend service image
+# "docker compose build backend" => builds only the backend service image
+
+# "docker compose up" => restarts the images in the container
+# If you:
+# Make no changes to your Dockerfiles or requirements.
+# Only modify internal code (like .py, .js, .html) already COPYed during the last build.

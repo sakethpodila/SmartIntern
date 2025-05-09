@@ -1,0 +1,6 @@
+tests/
+.env
+**/__pycache__/
+.vscode/
+venv_smartintern
+debug.log
