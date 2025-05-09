@@ -7,7 +7,7 @@ services:
     autoDeploy: true
     envVars:
       - key: BACKEND_URL
-        value: https://backend-2cxc.onrender.com
+        value: https://backend-gd2l.onrender.com
       - fromGroup: SmartIntern_env_var  # ✅ Reference your environment group
 
   - type: web
