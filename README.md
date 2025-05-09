@@ -14,6 +14,7 @@ SmartIntern is a multi-agent AI application designed to automate and enhance the
 | LLM & NLP       | OpenAI LLMs |
 | Agents          | ReAct, Adaptive RAG, Chatbot, Embeddings, Cover Letter Generator, Job Search Agent|
 | Embeddings      | OpenAI |
+| Deployment      | Docker, Render| 
 
 ---
 
