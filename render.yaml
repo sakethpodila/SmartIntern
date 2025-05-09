@@ -8,8 +8,7 @@ services:
     envVars:
       - key: BACKEND_URL
         value: http://backend:8000
-    envVarGroups:
-      - SmartIntern_env_var
+      - fromGroup: SmartIntern_env_var  # ✅ Reference your environment group
 
   - type: web
     name: backend
@@ -17,5 +16,5 @@ services:
     plan: free
     dockerfilePath: ./backend/Dockerfile_backend
     autoDeploy: true
-    envVarGroups:
-      - SmartIntern_env_var
+    envVars:
+      - fromGroup: SmartIntern_env_var  # ✅ Reference your environment group
