@@ -23,8 +23,5 @@ services:
     plan: free
     dockerfilePath: ./backend/Dockerfile_backend
     autoDeploy: true
-    envVars:
-      - key: OPENAI_API_KEY
-        fromEnv: OPENAI_API_KEY  # Reference the environment variable from Render dashboard
-      - key: RAPID_API_KEY
-        fromEnv: RAPID_API_KEY  # Reference the environment variable from Render dashboard
+    envVarGroups:
+      - SmartIntern_env_var
