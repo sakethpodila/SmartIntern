@@ -13,7 +13,7 @@ services:
       - ./backend:/app
       - ./agents:/app/agents
 
-  frontend:
+  SmartIntern:
     build:
       context: .
       dockerfile: frontend/Dockerfile_frontend
