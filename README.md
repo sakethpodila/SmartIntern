@@ -1,7 +1,7 @@
 # SmartIntern - AI-Powered Internship & Job Assistant Agent
 
 ## 🔍 Overview
-SmartIntern is a multi-agent AI application designed to automate and enhance the internship/job search process. It combines resume parsing, chatbot-based preference gathering, job listing retrieval via JSearch API, semantic similarity matching, and AI-generated cover letters. The system is modular, agent-based, and built for deployment with a sleek Streamlit UI and FastAPI backend.
+SmartIntern is a multi-agent AI application designed to automate and enhance the internship/job search process. It combines resume parsing, chatbot-based preference gathering, job listing retrieval via JSearch API, semantic similarity matching, and AI-generated cover letters. The system is modular, agent-based, and built for deployment with a sleek Streamlit UI, FastAPI backend and Deployed usng Render.
 
 ---
 
@@ -9,11 +9,11 @@ SmartIntern is a multi-agent AI application designed to automate and enhance the
 
 | Layer           | Tools/Tech Used                                    |
 |----------------|-----------------------------------------------------|
-| Backend         | Python, FastAPI, LangGraph, LangChain, JSearch API |
+| Backend         | Python, FastAPI, LangChain, JSearch API |
 | Frontend        | Streamlit                                          |
-| LLM & NLP       | OpenAI, HuggingFace, Sentence Transformers         |
-| Agents          | ReAct, Adaptive RAG, Corrective RAG, Plan-and-Execute |
-| Embeddings      | SentenceTransformers, FAISS                        |
+| LLM & NLP       | OpenAI LLMs |
+| Agents          | ReAct, Adaptive RAG, Chatbot, Embeddings, Cover Letter Generator, Job Search Agent|
+| Embeddings      | OpenAI |
 
 ---
 
@@ -24,11 +24,10 @@ graph TD
 A[Upload Resume] --> B[Parse Resume with LLMs & NLP]
 B --> C[Chatbot Interaction with ReAct Agent]
 C --> D[User Prompt Engineering + Resume Context]
-D --> E[Select Job Platforms from Dropdown]
-E --> F[Query JSearch API for Job Listings]
-F --> G[Semantic Matching with Resume & Prompt]
-G --> H[Display Jobs with Links in Streamlit UI]
-H --> I[Generate AI Cover Letters for Each Job]
+D --> E[Query JSearch API for Job Listings]
+E --> F[Semantic LLM Matching with Resume & Prompt]
+F --> G[Display Jobs with Links in Streamlit UI]
+G --> H[Generate and Edit AI Cover Letters for Each Job]
 ```
 
 ---
@@ -38,10 +37,8 @@ H --> I[Generate AI Cover Letters for Each Job]
 - ✉️ Resume Upload & LLM Parsing
 - 🫵 Interactive Chatbot using ReAct + Reflection
 - 🔢 Embedding-Based Job Similarity Matching
-- 🕐 Dropdown to Select Job Platform
 - 🔍 Job Scraping via JSearch API
 - 📝 Personalized Cover Letter Generation
-- 📅 Modular, Agent-Based LangGraph Architecture
 
 ---
 
@@ -49,7 +46,6 @@ H --> I[Generate AI Cover Letters for Each Job]
 
 - **ReAct Agent**: Conversational reasoning to understand user preferences
 - **Adaptive RAG**: Dynamically adapts to retrieve contextually relevant jobs
-- **Corrective RAG**: Self-evaluates retrieval quality and retries if poor
 - **Plan-and-Execute**: (Optional future use) for timeline-based job tracking
 
 ---
@@ -74,13 +70,12 @@ Note: These are accessed legally through JSearch (a middle-layer job API, not sc
 
 ---
 
-## 📄 License
-MIT License
-
 ## 🚀 Contributing
 Feel free to fork, raise issues, or submit pull requests for improvements!
 
 ---
 
-## ✨ Maintained By
-Built with ❤️ by [Your Name] for Hackathon Innovation.
+## ✨ Maintained By KSAP and PODS
+Built for Jobless people, free to Innovation.
+
+### Website Link: [text](https://smartintern.onrender.com)
