@@ -79,3 +79,4 @@ Feel free to fork, raise issues, or submit pull requests for improvements!
 Built for Jobless people, free to Innovate.
 
 ### Website Link: [SmartIntern](https://smartintern.onrender.com)
+Could be Inactive. Notify for activation.
