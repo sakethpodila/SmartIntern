@@ -17,4 +17,4 @@ services:
     dockerfilePath: ./backend/Dockerfile_backend
     autoDeploy: true
     envVars:
-      - fromGroup: SmartIntern_env_var  # ✅ Reference your environment group
+      - fromGroup: env  # ✅ Reference your environment group
